@@ -19,15 +19,6 @@
     <link rel="stylesheet" type="text/css" href="{{asset "css/all.min.css"}}" />
     {{! Ghost outputs important style and meta data with this tag }}
     {{ghost_head}}
-    <script>
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?d60bcc77299990ec2461de1b0c126319 ";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-    </script>
 </head>
 <body class="{{body_class}} nav-closed">
 {{! Everything else gets inserted here }}
@@ -38,47 +29,53 @@
         <a href="https://github.com/foru17/Yasuko">Theme Yasuko  </a> <a href="https://github.com/foru17/Yasuko" class="github-repo"><span class="gadget-github"></span>Star</a> Designed by <a href="https://luolei.org ">@罗磊</a>
         </section>
             <section class="poweredby ">Powered by  <a href="https://ghost.org ">Ghost</a></section>
-						<section class="poweredby ">本博客托管于  <a href="https://luolei.org/how-much-i-spend-on-cloud-monthly/">阿里云中国</a>  CDN赞助 by <a href="https://www.upyun.com">Upyun又拍云</a> </section>
-            <section><a href="http://www.miitbeian.gov.cn/">粤ICP备14004235号</a></section>
+            <section><a href="http://www.miitbeian.gov.cn/">辽ICP备15015656号</a></section>
     </footer>
     {{!-- jQuery needs to come before `{{ghost_foot}}` so that jQuery can be used in code injection --}}
     <script type="text/javascript" src="https://upcdn.b0.upaiyun.com/libs/jquery/jquery-2.0.3.min.js"></script>
     {{! Ghost outputs important scripts and data with this tag }}
     {{ghost_foot}}
     <script type="text/javascript" src="{{asset "js/all.min.js"}}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.6.0/APlayer.min.js"></script>
+<script type="text/javascript">
+    
+    autoplay = true;
+    var id;
+    var midpattern = new RegExp("^musicid");
+    var playpattern = new RegExp("^autoplay");
 
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', 'UA-21856187-2', 'luolei.org');
-    ga('require', 'displayfeatures');
-    ga('send', 'pageview');
-    </script>
-    <script>
-        (function(){
-            if (!window.addEventListener) return;
-            window.addEventListener('load', function(){
-                var performance = window.performance;
-                if (performance === undefined) return;
-                timing = window.performance.timing;
-                if (timing === undefined) return;
-                if (document.cookie.indexOf('statistics_clientid=') != -1) return;
-                var domain_lookup_time = timing.domainLookupEnd - timing.domainLookupStart;
-                var connect_time = timing.connectEnd - timing.connectStart;
-                var read_content_time = timing.responseEnd - timing.responseStart;
-                new Image().src = ('https:' == document.location.protocol ? 'https://' : 'http://')
-                    + 'stat.dnspod.cn/statistics/'
-                    + domain_lookup_time + "/"
-                    + connect_time + "/"
-                    + read_content_time + ".png";
-                var exdate=new Date();
-                exdate.setDate(exdate.getDate() + 1);
-                document.cookie="statistics_clientid=me"
-                + ";expires="+exdate.toGMTString();
-            }, false);
-        }());
-    </script>
+    $("div").find("p").each(function(){
+        if(midpattern.test($(this).text())) {
+            idindex = $(this).text().indexOf("=")
+            id = $(this).text().substr(idindex+1);
+        }
+        if(playpattern.test($(this).text())){
+            autoplay = false;
+        }
+    });
+
+    if(id){
+        var mdetail = $.getJSON("http://www.lyhonk.com:3000/song/detail?ids="+id);
+        var murl = $.getJSON("http://www.lyhonk.com:3000/music/url?id="+id);
+        var mlrc = $.getJSON("http://www.lyhonk.com:3000/lyric?id="+id);
+        $.when(mdetail, murl, mlrc).done(function(a, b, c){
+            var ap = new APlayer({
+                element: document.getElementById('musicplayer'),
+                narrow: false, 
+                autoplay: autoplay, 
+                mutex: true,
+                showlrc:1,
+                music: {
+                    title: a[0].songs[0].name,
+                    author: a[0].songs[0].ar[0].name,
+                    pic: a[0].songs[0].al.picUrl,
+                    url: b[0].data[0].url,
+                    lrc: c[0].lrc.lyric ,
+                }
+            });
+        });
+    };
+
+</script>
 </body>
 </html>

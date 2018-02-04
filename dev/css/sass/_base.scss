@@ -151,7 +151,7 @@ h1 {
 .home-header {
     // background: url(http://luoleiorg.b0.upaiyun.com/tmp/yasuko/bg.jpeg!/fw/750);
 }
-.home-template, .archive-template {
+.home-template, .paged {
     #main {
         max-width: 76.8rem;
     }
@@ -213,10 +213,10 @@ h1 {
         animation-iteration-count: infinite;
     }
 }
-.home-template #main, .archive-template #main, .tag-template #main {
+.home-template #main, .paged #main, .tag-template #main {
     margin: 2rem auto;
 }
-.archive-template {
+.paged {
     .arrow_down {
         // display: none;
     }
